@@ -1,0 +1,20 @@
+{
+  "name": "funkcie",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "./node_modules/.bin/tsc-watch --onSuccess \"node ./dist/\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^12.12.64",
+    "tsc-watch": "^4.2.9",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "node": "^12.18.3"
+  }
+}
