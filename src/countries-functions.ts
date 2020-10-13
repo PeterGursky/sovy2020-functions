@@ -1,4 +1,5 @@
 import { access } from "fs";
+import * as _ from "lodash";
 
 export interface Country {
     name: string;
@@ -124,4 +125,17 @@ export const task7 = (countries: Country[]): any => {
                 fivePlusCurrencies,
                 sortCurrencies,
                 tap(value => console.log(value)))(countries);
+}
+
+export const task8 = (countries: Country[]): any => {
+    const languageObjects = (country: Country): { population: number, language:string}[] => {
+        return country.languages.map(language => 
+             ({ language : language.name, population: country.population}));
+    }
+
+    const languageCountObjects = (countries: Country[]):{population: number, language:string}[] => {
+        return countries
+        .flatMap(country => languageObjects(country))
+    }  
+    return _.flow([languageCountObjects])(countries);
 }
