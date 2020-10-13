@@ -137,5 +137,66 @@ export const task8 = (countries: Country[]): any => {
         return countries
         .flatMap(country => languageObjects(country))
     }  
-    return _.flow([languageCountObjects])(countries);
+
+    const languageToCountObject = (occurencies: {population: number, language:string}[])
+    : {[key: string]: number} => {
+        return occurencies.reduce((acc, occurence) => {
+            // return acc[occurence.language] 
+            //  ? {...acc, [occurence.language]: occurence.population + acc[occurence.language] }
+            //  : {...acc, [occurence.language]: occurence.population}
+            return {...acc, [occurence.language]: 
+                             (acc[occurence.language] || 0) + occurence.population}
+        }, {});       
+    }
+
+    const arrayOfLanguages = (obj: {[key: string]: number}):{language:string, count:number}[] => {
+        return Object.entries(obj).map(pair => ({language: pair[0], count: pair[1]}));
+    }
+
+    const sortArray = (languageArr: {language:string, count:number}[]):{language:string, count:number}[] => {
+        return languageArr.sort((a,b) => b.count - a.count);
+    }
+
+    const topTen = (languageArr: {language:string, count:number}[]):{language:string, count:number}[] => {
+        return languageArr.slice(0, 10);
+    }
+
+    const humanReadable = (languageArr: {language:string, count:number}[])
+       :{language:string, count:string}[] => {
+        return languageArr.map(obj => 
+            ({language:obj.language, count: Math.round(obj.count/1e6) / 1000 + " mld"}));
+    }
+
+    const toString = (languageArr: {language:string, count:string}[]): string => {
+        return languageArr.reduce((acc, obj) => acc + obj.language + " " + obj.count + "\n" , "");
+    }
+
+    const toString2 = (languageArr: {language:string, count:string}[]): string => {
+
+        const maxlen = languageArr.reduce(
+            (max, obj) => obj.language.length > max ? obj.language.length: max, 0);
+
+        const printSpaces = ( language: string, maxlen: number) => {
+            let spaces = " ";
+            for (let i = 0; i < maxlen - language.length ; i++) {
+                spaces += " "; 
+            } 
+            return spaces;    
+        } 
+
+        const printOne = (obj: {language:string, count:string}, maxLength:number) => {
+            return obj.language + printSpaces(obj.language, maxlen) + obj.count + "\n";
+        }
+
+        return languageArr.reduce((acc, obj) => acc + printOne(obj, maxlen) , "");
+    }
+
+    return _.flow([languageCountObjects,
+                   languageToCountObject,
+                   arrayOfLanguages,
+                   sortArray,
+                   topTen,
+                   humanReadable,
+                   toString2
+                 ])(countries);
 }
